@@ -1,5 +1,5 @@
-// Keeps public/downloads/TalkLink.apk in step with the newest APK built in the TalkLink app repo
-// (../talklink/App/apk/*.apk) when that folder exists next to this one. Elsewhere (Vercel, a fresh
+// Keeps public/downloads/TalkLink.apk in step with the newest APK built by the app
+// (talklink/App/apk/*.apk - this site lives in talklink/website). Elsewhere (Vercel, a fresh
 // clone of this repo) the committed public/downloads/TalkLink.apk is served as is.
 import fs from 'fs';
 import path from 'path';
@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const dest = path.join(root, 'public', 'downloads', 'TalkLink.apk');
-const apkDir = path.join(root, '..', 'talklink', 'App', 'apk');
+const apkDir = path.join(root, '..', 'App', 'apk');
 
 const newest = fs.existsSync(apkDir)
   ? fs
