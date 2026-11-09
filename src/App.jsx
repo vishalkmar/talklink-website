@@ -3,7 +3,7 @@ import { MotionConfig, motion, useScroll, useSpring } from 'framer-motion';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Assembly from './components/Assembly';
-import Modules from './components/Modules';
+import CallStory from './components/CallStory';
 import Layers from './components/Layers';
 import { Install, Faq, FinalCta, Footer } from './components/Sections';
 import { DownloadButton } from './components/ui';
@@ -16,7 +16,7 @@ const ScrollBar = () => {
 
 const App = () => (
   <MotionConfig reducedMotion="user">
-    <a className="sr-only" href="#how">
+    <a className="sr-only" href="#call">
       Skip to content
     </a>
     <div className="bg" aria-hidden="true">
@@ -28,8 +28,8 @@ const App = () => (
     <Header />
     <main>
       <Hero />
+      <CallStory />
       <Assembly />
-      <Modules />
       <Layers />
       <Install />
       <Faq />

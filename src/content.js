@@ -14,8 +14,8 @@ export const SITE = {
 };
 
 export const NAV = [
+  { id: 'call', label: 'Calling' },
   { id: 'how', label: 'How it works' },
-  { id: 'features', label: 'Features' },
   { id: 'safety', label: 'Safety' },
   { id: 'install', label: 'Install' },
   { id: 'faq', label: 'FAQ' },
@@ -35,15 +35,22 @@ export const STEPS = [
   { n: '04', title: 'Come back', text: 'Streaks, goals and free credits every day.' },
 ];
 
-// horizontal modules (components/Modules.jsx)
-export const MODULES = [
-  { id: 'random', tag: 'Random talk', title: 'Audio or text. Your call.', text: 'Talk to anyone, or use credits for the gender filter.' },
-  { id: 'number', tag: 'Private number', title: 'A number that is not your number.', text: 'Share #86369, not your phone. Dial it from the app.' },
-  { id: 'voice', tag: 'Voice notes', title: 'Say it in your own voice.', text: 'Up to two minutes. One tap to play.' },
-  { id: 'once', tag: 'View once', title: 'Opens once. Then gone.', text: 'For texts and voice notes. Gone for both of you.' },
-  { id: 'status', tag: 'Status', title: 'Your day, for 24 hours.', text: 'Photos or 30-second videos. Up to three at a time.' },
-  { id: 'rewards', tag: 'Rewards', title: 'Show up. Get paid in credits.', text: 'Daily spin, streak bonus, invites and videos.' },
-];
+// the scroll scene under the hero (components/CallStory.jsx)
+export const CALL_STORY = {
+  title: 'Two people. One tap. A real conversation.',
+  steps: [
+    { n: '01', text: "Rahul opens TalkLink and dials Meera's private number, #86369." },
+    { n: '02', text: "One tap on call - Meera's phone rings, wherever she is." },
+    { n: '03', text: 'She picks up. A clear, encrypted voice call - no phone numbers shared.' },
+    { n: '04', text: 'After the call the chat keeps going: texts, voice notes, view-once.' },
+  ],
+  chat: [
+    { from: 'meera', text: 'That was fun! 😄' },
+    { from: 'rahul', text: 'Same here. Talk tomorrow?' },
+    { from: 'meera', text: '🎤 Voice note · 0:12' },
+    { from: 'rahul', text: '① View once photo' },
+  ],
+};
 
 // safety layers (components/Layers.jsx), top to bottom
 export const LAYERS = [
