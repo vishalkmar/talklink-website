@@ -1,0 +1,13 @@
+{
+  "name": "TalkLink - Talk to someone new",
+  "short_name": "TalkLink",
+  "description": "Random voice calls and chats with new people. Private number, voice notes, status, streaks.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F6F5",
+  "theme_color": "#22878F",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

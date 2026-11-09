@@ -1,0 +1,25 @@
+# TalkLink
+
+> TalkLink is an Android app (India) to talk to new people: random voice calls and text chats in
+> seconds, plus direct calls to friends through a private number. Free to use; 18+ only.
+> Download the APK: https://talklink-website.vercel.app/downloads/TalkLink.apk
+
+## What it does
+- Random audio calls or text chats: tap Start talking, the first person online who accepts is connected.
+- Private number (5-6 digits) instead of your phone number: share it, or dial it on the in-app dialpad, to call or message someone directly.
+- Chat: text, voice notes (up to 2 minutes), view-once messages that disappear after one view, seen ticks, typing.
+- Status: post up to 3 photos or 30-second videos at a time; they disappear after 24 hours; people you have talked to can view and download them.
+- Goals and rewards: daily streak, best streak, aura points, daily and weekly goals, weekly aura leaderboard, daily spin wheel, rewarded videos.
+- Credits: 100 welcome credits, daily bonus, 500 per rewarded video, invite friends (both get 200). Credits unlock the gender filter (10,000 credits for 30 minutes); calls and chats themselves are free.
+- Safety: email one-time-code login, private number only (no phone number shared), choose who can call you, block and report, 18+ age confirmation, delete account in the app.
+- Premium (optional): gender filter included, extra spins, priority matching, badge.
+
+## Facts
+- Platform: Android 7.0 or newer, APK 56 MB, version 1.0.0
+- Price: free; optional in-app purchases (credit packs, Premium)
+- Languages: English
+- Calls are peer-to-peer and encrypted (WebRTC, DTLS-SRTP); calls are not recorded
+
+## Links
+- Website: https://talklink-website.vercel.app/
+- APK: https://talklink-website.vercel.app/downloads/TalkLink.apk

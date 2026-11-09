@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# AI crawlers are welcome: the page and llms.txt describe the app
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://talklink-website.vercel.app/sitemap.xml

@@ -1,0 +1,6 @@
+node_modules
+dist
+dist-ssr
+.env.local
+# no README in this repo (owner's choice)
+README.md
