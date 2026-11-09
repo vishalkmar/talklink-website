@@ -4,7 +4,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Assembly from './components/Assembly';
 import CallStory from './components/CallStory';
-import Layers from './components/Layers';
+import Privacy from './components/Privacy';
 import { Install, Faq, FinalCta, Footer } from './components/Sections';
 import { DownloadButton } from './components/ui';
 
@@ -30,7 +30,7 @@ const App = () => (
       <Hero />
       <CallStory />
       <Assembly />
-      <Layers />
+      <Privacy />
       <Install />
       <Faq />
       <FinalCta />

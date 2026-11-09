@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { STEPS } from '../content';
+import { Logo } from './ui';
 import { CallPart, CoinPart, MatchPart, NumberPart, OncePart, StatusPart, StreakPart, VoicePart } from './parts';
 
 // "How it works": a pinned blueprint. The app's parts start exploded around the board, each with a
@@ -11,14 +12,14 @@ const BOARD_H = 480;
 
 // final centre (x, y) on the board, where it comes from (dx, dy, rotations, depth) and its step
 const PARTS = [
-  { key: 'match', C: MatchPart, x: 150, y: 88, from: [-170, -250, -24, 30, 220], step: 0, label: 'MATCH ENGINE' },
-  { key: 'number', C: NumberPart, x: 420, y: 62, from: [300, -200, 18, -40, 160], step: 0, label: 'PRIVATE ID' },
-  { key: 'call', C: CallPart, x: 408, y: 178, from: [360, -20, -14, 35, 260], step: 1, label: 'VOICE CHANNEL' },
-  { key: 'coin', C: CoinPart, x: 430, y: 410, from: [330, 200, 22, -30, 180], step: 1, label: 'WALLET' },
-  { key: 'voice', C: VoicePart, x: 170, y: 214, from: [-120, -10, 16, -35, 300], step: 2, label: 'VOICE NOTE' },
-  { key: 'once', C: OncePart, x: 132, y: 318, from: [-110, 210, -20, 25, 240], step: 2, label: 'VIEW ONCE' },
-  { key: 'status', C: StatusPart, x: 398, y: 300, from: [380, 120, -16, 30, 220], step: 3, label: 'STATUS 24H' },
-  { key: 'streak', C: StreakPart, x: 176, y: 414, from: [-150, 280, 20, -25, 260], step: 3, label: 'STREAK' },
+  { key: 'match', C: MatchPart, x: 150, y: 88, from: [-100, -90, -24, 30, 160], step: 0, label: 'MATCH ENGINE' },
+  { key: 'number', C: NumberPart, x: 420, y: 62, from: [170, -110, 18, -40, 140], step: 0, label: 'PRIVATE ID' },
+  { key: 'call', C: CallPart, x: 424, y: 178, from: [200, -10, -14, 35, 180], step: 1, label: 'VOICE CHANNEL' },
+  { key: 'coin', C: CoinPart, x: 430, y: 410, from: [170, 110, 22, -30, 150], step: 1, label: 'WALLET' },
+  { key: 'voice', C: VoicePart, x: 150, y: 214, from: [-90, 10, 16, -35, 200], step: 2, label: 'VOICE NOTE' },
+  { key: 'once', C: OncePart, x: 128, y: 318, from: [-90, 60, -20, 25, 170], step: 2, label: 'VIEW ONCE' },
+  { key: 'status', C: StatusPart, x: 428, y: 300, from: [190, 60, -16, 30, 170], step: 3, label: 'STATUS 24H' },
+  { key: 'streak', C: StreakPart, x: 176, y: 414, from: [-90, 100, 20, -25, 160], step: 3, label: 'STREAK' },
 ];
 
 // wire from the central hub to a part's socket
@@ -34,10 +35,10 @@ const LiveWire = ({ part, progress, index }) => {
 
 // scroll window in which each step's parts fly in
 const WINDOWS = [
-  [0.04, 0.24],
-  [0.24, 0.44],
-  [0.44, 0.64],
-  [0.64, 0.84],
+  [0.02, 0.18],
+  [0.18, 0.34],
+  [0.34, 0.5],
+  [0.5, 0.66],
 ];
 
 const Part = ({ part, progress, index }) => {
@@ -50,16 +51,13 @@ const Part = ({ part, progress, index }) => {
   const rotateX = useTransform(p, (v) => rx * (1 - v));
   const rotateY = useTransform(p, (v) => ry * (1 - v));
   const z3 = useTransform(p, (v) => z * (1 - v));
-  const opacity = useTransform(p, [0, 0.15, 1], [0.35, 0.85, 1]);
+  const opacity = useTransform(p, [0, 1], [0.92, 1]);
   const labelOpacity = useTransform(p, [0, 0.6, 0.9], [1, 1, 0]);
   const lineScale = useTransform(p, [0, 0.8], [1, 0]);
   const snapped = useTransform(p, [0.85, 0.95, 1], [0, 0.9, 0]);
-  const socket = useTransform(p, [0.8, 1], [1, 0]);
   const C = part.C;
   return (
     <div className="slot" style={{ left: part.x, top: part.y }}>
-      {/* the empty socket on the blueprint that the part locks into */}
-      <motion.span className="socket" style={{ opacity: socket }} />
       <motion.div className="slot-part" style={{ x, y, rotateX, rotateY, z: z3, opacity }}>
         <motion.span className="snap-flash" style={{ opacity: snapped }} />
         <C />
@@ -77,7 +75,7 @@ const Assembly = () => {
   const stageRef = useRef(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const smooth = useSpring(scrollYProgress, { stiffness: 90, damping: 22, mass: 0.4 });
+  const smooth = useSpring(scrollYProgress, { stiffness: 60, damping: 20, mass: 0.5 });
   const done = useMotionValue(1);
   const progress = reduce ? done : smooth;
   const [step, setStep] = useState(reduce ? 3 : 0);
@@ -101,10 +99,11 @@ const Assembly = () => {
     return () => ro.disconnect();
   }, []);
 
-  const core = useTransform(progress, [0.84, 0.95], [0, 1]);
+  const core = useTransform(progress, [0.66, 0.74], [0, 1]);
   const coreY = useTransform(core, [0, 1], [12, 0]);
-  const hub = useTransform(progress, [0, 0.84, 0.92], [0.6, 0.8, 1.3]);
-  const bar = useTransform(progress, [0.04, 0.84], ['0%', '100%']);
+  const hub = useTransform(progress, [0, 0.66, 0.74], [0.85, 0.95, 1.12]);
+  const hubGlow = useTransform(progress, [0.6, 0.74], [0, 1]);
+  const bar = useTransform(progress, [0.02, 0.66], ['0%', '100%']);
 
   return (
     <section className="assembly" id="how" ref={ref} aria-labelledby="how-title">
@@ -131,14 +130,14 @@ const Assembly = () => {
           <div className="assembly-stage" ref={stageRef} aria-hidden="true">
             <div className="board" style={{ width: BOARD_W, height: BOARD_H, transform: `translate(-50%, -50%) scale(${scale})` }}>
               <svg className="board-wires" viewBox={`0 0 ${BOARD_W} ${BOARD_H}`}>
-                {PARTS.map((p) => (
-                  <path key={p.key} d={wirePath(p)} />
-                ))}
                 {PARTS.map((p, i) => (
                   <LiveWire key={`live-${p.key}`} part={p} progress={progress} index={i} />
                 ))}
               </svg>
-              <motion.span className="hub" style={{ scale: hub }} />
+              <motion.div className="hub-logo" style={{ scale: hub }}>
+                <motion.span className="hub-glow" style={{ opacity: hubGlow }} />
+                <Logo size={64} />
+              </motion.div>
               <motion.div className="board-core" style={{ opacity: core, y: coreY }}>
                 <span className="core-dot" />
                 All parts connected

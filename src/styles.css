@@ -640,7 +640,7 @@ main,
 /* ---------- assembly (how it works) ---------- */
 .assembly {
   position: relative;
-  height: 420vh;
+  height: 300vh;
 }
 .assembly-pin {
   position: sticky;
@@ -851,131 +851,6 @@ main,
 }
 .spec-r i {
   transform-origin: 0 50%;
-}
-
-/* ---------- safety layers ---------- */
-.layers {
-  position: relative;
-  height: 240vh;
-}
-.layers-pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
-.layers-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-}
-.layers-text > p {
-  margin-top: 14px;
-  color: var(--ink-2);
-  max-width: 420px;
-}
-.layer-list {
-  margin-top: 22px;
-  display: grid;
-  gap: 10px;
-}
-.layer-list li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-radius: 14px;
-  font-size: 14px;
-  color: var(--ink-2);
-  opacity: 0.45;
-  transition: opacity 0.4s, background 0.4s, box-shadow 0.4s;
-}
-.layer-list li.on {
-  opacity: 1;
-  background: var(--card);
-  box-shadow: var(--shadow), 0 0 0 1px var(--line);
-}
-.layer-list b {
-  display: block;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-}
-.layer-ico {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--teal-soft);
-  color: var(--teal);
-}
-.layer-list li.on .layer-ico {
-  background: var(--teal);
-  color: #fff;
-}
-.plate-edge {
-  position: absolute;
-  inset: -2px;
-  border-radius: 36px;
-  box-shadow: 0 0 0 2px var(--teal-light), 0 0 28px rgba(34, 135, 143, 0.55);
-}
-.stack-stage {
-  height: 520px;
-  display: grid;
-  place-items: center;
-  perspective: 1600px;
-}
-.stack {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  transform-style: preserve-3d;
-}
-.plate {
-  position: absolute;
-  inset: 0;
-  border-radius: 34px;
-  transform-style: preserve-3d;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6) inset, 0 30px 40px -20px rgba(20, 90, 96, 0.45);
-}
-.plate-0 {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(227, 241, 242, 0.92));
-}
-.plate-1 {
-  background: linear-gradient(145deg, rgba(123, 198, 204, 0.92), rgba(42, 163, 172, 0.92));
-}
-.plate-2 {
-  background: linear-gradient(145deg, var(--teal), var(--teal-deep));
-}
-.plate-grid {
-  position: absolute;
-  inset: 14px;
-  border-radius: 24px;
-  border: 1px dashed rgba(255, 255, 255, 0.45);
-}
-.plate-0 .plate-grid {
-  border-color: rgba(34, 135, 143, 0.35);
-}
-.plate-ico {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.22);
-  color: #fff;
-}
-.plate-0 .plate-ico {
-  background: var(--teal);
 }
 
 /* ---------- install ---------- */
@@ -1361,7 +1236,7 @@ main,
 /* ---------- call story ---------- */
 .callstory {
   position: relative;
-  height: 520vh;
+  height: 400vh;
 }
 .callstory-pin {
   position: sticky;
@@ -1376,6 +1251,7 @@ main,
   text-align: center;
 }
 .callstory-head h2 {
+  font-size: clamp(24px, 2.6vw, 34px);
   max-width: 720px;
   margin-inline: auto;
 }
@@ -1416,8 +1292,8 @@ main,
 .cs-scene {
   position: absolute;
   left: 50%;
-  top: 50%;
-  transform-origin: center;
+  bottom: 0;
+  transform-origin: 50% 100%;
 }
 .cs-signal {
   position: absolute;
@@ -1897,4 +1773,357 @@ span.scr-chat em.out {
 .cs-float.meera {
   background: var(--card);
   border-bottom-right-radius: 4px;
+}
+
+/* ---------- hero v3: live call phone + flying pieces ---------- */
+.hero-art {
+  perspective: 1200px;
+  aspect-ratio: 1 / 1.05;
+  max-width: 520px;
+}
+.hero-glow {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(42, 163, 172, 0.35), rgba(42, 163, 172, 0) 70%);
+  filter: blur(10px);
+}
+.hero-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 260px;
+  height: 260px;
+  margin: -130px 0 0 -130px;
+  border-radius: 50%;
+  border: 2px solid rgba(34, 135, 143, 0.45);
+  animation: heroRing 1.8s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes heroRing {
+  from {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+.hero-phone-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 230px;
+  height: 432px;
+  margin: -216px 0 0 -115px;
+  transform-style: preserve-3d;
+  z-index: 2;
+}
+.hero-phone {
+  position: absolute;
+  inset: 0;
+  padding: 7px;
+  border-radius: 38px;
+  background: linear-gradient(145deg, #2c4247, #0c1618);
+  box-shadow: 0 50px 80px -30px rgba(12, 40, 44, 0.55), inset 0 0 0 2px #3a5257, inset 0 0 0 5px #0c1618;
+}
+.hero-phone .notch {
+  top: 16px;
+  width: 54px;
+  height: 10px;
+  border-radius: 6px;
+}
+.hero-phone .phone-screen {
+  width: 150px;
+  height: 290px;
+  border-radius: 21px;
+  transform: scale(1.44);
+  transform-origin: 0 0;
+}
+.piece {
+  position: absolute;
+  z-index: 3;
+}
+.p-caller {
+  padding: 10px 16px 10px 10px;
+}
+.dot-on {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2e9e5b;
+  margin-right: 3px;
+}
+.p-chip {
+  gap: 8px;
+  font-weight: 600;
+  padding: 10px 14px;
+}
+.p-chip-ico {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #fdf1d3;
+}
+.p-bubble {
+  padding: 10px 14px;
+  border-radius: 18px 18px 18px 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.p-bubble.mine {
+  background: var(--teal);
+  color: #fff;
+  border-radius: 18px 18px 4px 18px;
+}
+.hero-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--line);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--teal-text);
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2e9e5b;
+  animation: blink 1.2s infinite;
+}
+.hero-live-text {
+  min-width: 112px;
+}
+.hero-live-steps {
+  display: flex;
+  gap: 4px;
+}
+.hero-live-steps i {
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(34, 135, 143, 0.2);
+  transition: background 0.3s, width 0.3s;
+}
+.hero-live-steps i.on {
+  width: 24px;
+  background: var(--teal);
+}
+@media (max-width: 960px) {
+  .hero-art {
+    max-width: 400px;
+    margin-top: 10px;
+  }
+  .hero-phone-wrap {
+    scale: 0.78;
+  }
+  .piece .part {
+    scale: 0.82;
+  }
+}
+@media (max-width: 480px) {
+  .hero-phone-wrap {
+    scale: 0.68;
+  }
+  .piece .part {
+    scale: 0.7;
+  }
+}
+
+/* assembly v2 */
+.hub-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  z-index: 1;
+  filter: drop-shadow(0 12px 20px rgba(20, 90, 96, 0.35));
+}
+.hub-glow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 30px;
+  box-shadow: 0 0 0 3px rgba(34, 135, 143, 0.35), 0 0 40px rgba(34, 135, 143, 0.7);
+}
+
+/* ---------- privacy (replaces the layer stack) ---------- */
+.privacy-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 56px;
+  align-items: center;
+}
+.pv-list {
+  margin-top: 24px;
+  display: grid;
+  gap: 12px;
+}
+.pv-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.pv-list b {
+  display: block;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--ink);
+}
+.pv-stack {
+  display: grid;
+  gap: 16px;
+}
+.pv-card {
+  position: relative;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: var(--card);
+  box-shadow: var(--shadow), 0 0 0 1px var(--line);
+  overflow: hidden;
+}
+.pv-1 {
+  margin-left: 40px;
+}
+.pv-2 {
+  margin-left: 12px;
+}
+.pv-label {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal-text);
+}
+.pv-caller {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pv-caller b {
+  display: block;
+  font-family: var(--display);
+  font-size: 16px;
+}
+.pv-caller small {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.pv-stamp {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  margin-top: -20px;
+  padding: 6px 14px;
+  border: 3px solid var(--red);
+  border-radius: 10px;
+  color: var(--red);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  rotate: -10deg;
+  background: rgba(240, 74, 85, 0.06);
+}
+.pv-seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 4px;
+  border-radius: 14px;
+  background: #eef2f1;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+.pv-seg span {
+  position: relative;
+  z-index: 1;
+  padding: 9px 6px;
+}
+.pv-seg .pv-seg-pill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: calc(33.333% - 4px);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: 0 4px 12px -4px rgba(18, 56, 60, 0.3), 0 0 0 1.5px var(--teal);
+  z-index: 0 !important;
+  padding: 0 !important;
+}
+.pv-lockrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pv-wire {
+  flex: 1;
+  height: 20px;
+}
+.pv-wire-base {
+  stroke: rgba(34, 135, 143, 0.2);
+  stroke-width: 3;
+  stroke-dasharray: 4 6;
+}
+.pv-wire-on {
+  stroke: var(--teal);
+  stroke-width: 3;
+  fill: none;
+}
+.pv-lock {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  flex: none;
+}
+.pv-enc {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--teal-text);
+}
+@media (max-width: 960px) {
+  .privacy-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .pv-1,
+  .pv-2 {
+    margin-left: 0;
+  }
+  .pv-seg {
+    font-size: 11.5px;
+  }
+}
+.layer-ico {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--teal);
+  color: #fff;
+}
+.privacy-grid > * {
+  min-width: 0;
 }

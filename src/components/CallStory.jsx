@@ -77,12 +77,12 @@ const Person = ({ who }) => {
 // ---------- phone screens (HTML) ----------
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '#', '0', '⌫'];
 
-const Screen = ({ mode, digits, secs, chatN, name, from }) => {
+export const Screen = ({ mode, digits, secs, chatN, name, from }) => {
   const time = `${String(Math.floor(secs / 60)).padStart(2, '0')}:${String(secs % 60).padStart(2, '0')}`;
   const typed = NUMBER.slice(0, digits);
   const nextKey = NUMBER[digits] || '';
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence initial={false}>
       <motion.div
         key={mode}
         className={`scr scr-${mode}`}
@@ -175,7 +175,7 @@ const Screen = ({ mode, digits, secs, chatN, name, from }) => {
   );
 };
 
-const PhoneGlyph = () => (
+export const PhoneGlyph = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
     <path
       fill="currentColor"
@@ -207,7 +207,7 @@ const CallStory = () => {
   const stageRef = useRef(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const smooth = useSpring(scrollYProgress, { stiffness: 90, damping: 22, mass: 0.4 });
+  const smooth = useSpring(scrollYProgress, { stiffness: 55, damping: 20, mass: 0.5 });
   const fixed = useMotionValue(0.9);
   const progress = reduce ? fixed : smooth;
 
@@ -230,8 +230,9 @@ const CallStory = () => {
     const fit = () => {
       const r = el.getBoundingClientRect();
       // narrow screens crop the outer shoulders (the phones stay in view)
-      const visW = r.width < 700 ? W - 300 : W;
-      setScale(Math.min(1.05, r.width / visW, (r.height - 12) / H));
+      const visW = r.width < 700 ? W - 440 : W;
+      // the top of the scene is empty sky: crop it so the people can be bigger
+      setScale(Math.min(1.25, r.width / visW, (r.height - 8) / (H - 150)));
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -240,8 +241,8 @@ const CallStory = () => {
   }, []);
 
   // people slide in from both sides
-  const ax = useTransform(progress, [0, 0.1], [-420, 0]);
-  const ao = useTransform(progress, [0, 0.06], [0, 1]);
+  const ax = useTransform(progress, [0, 0.08], [-240, 0]);
+  const ao = useTransform(progress, [0, 0.04], [0.6, 1]);
   const bx = useTransform(progress, [0.36, 0.47], [420, 0]);
   const bo = useTransform(progress, [0.36, 0.42], [0, 1]);
   // the call line between the two phones draws in when Meera picks up
@@ -280,7 +281,7 @@ const CallStory = () => {
         </div>
 
         <div className="cs-stage" ref={stageRef} aria-hidden="true">
-          <div className="cs-scene" style={{ width: W, height: H, transform: `translate(-50%, -50%) scale(${scale})` }}>
+          <div className="cs-scene" style={{ width: W, height: H, transform: `translateX(-50%) scale(${scale})` }}>
             {/* signal between the phones */}
             <svg className="cs-signal" viewBox={`0 0 ${W} ${H}`}>
               {phase === 'calling' || phase === 'ringing'

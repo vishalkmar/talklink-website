@@ -1,148 +1,128 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion';
-import { HERO } from '../content';
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
+import { HERO, CALL_STORY } from '../content';
 import { DownloadButton } from './ui';
+import { Screen } from './CallStory';
+import { CoinPart, NumberPart, StreakPart, VoicePart } from './parts';
 
-// Hero art: the TalkLink tile cycles through what the app does - chat, voice call, the Android app,
-// messages - one glyph flipping into the next. Scrolling away tilts the tile back.
+// Hero: a phone in the middle plays a real TalkLink call on a loop (dial -> calling -> talking ->
+// chat). Around it, pieces of the app fly in from every side, settle, float - and spread out
+// with depth as you scroll away.
 
 const EASE = [0.22, 1, 0.36, 1];
+const NUMBER_LEN = 6;
 
-const BUBBLE =
-  'M76 36H180A48 48 0 0 1 228 84V138A48 48 0 0 1 180 186H122L62 226L78 186H76A48 48 0 0 1 28 138V84A48 48 0 0 1 76 36Z';
-const HANDSET =
-  'M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z';
-
-const Bars = ({ y = 111, color = '#22878F' }) =>
-  [
-    [68, 32],
-    [98, 68],
-    [128, 96],
-    [158, 68],
-    [188, 32],
-  ].map(([x, h], i) => (
-    <motion.rect
-      key={x}
-      x={x - 8}
-      y={y - h / 2}
-      width="16"
-      height={h}
-      rx="8"
-      fill={color}
-      animate={{ scaleY: [1, 0.5 + (i % 2) * 0.25, 1] }}
-      transition={{ duration: 1, repeat: Infinity, delay: i * 0.1, ease: 'easeInOut' }}
-      style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-    />
-  ));
-
-// each glyph is drawn in the 256 x 256 tile
-const GLYPHS = [
-  {
-    label: 'Chat',
-    art: (
-      <g transform="translate(43.5 43.5) scale(0.66)">
-        <path d={BUBBLE} fill="#fff" />
-        <Bars />
-      </g>
-    ),
-  },
-  {
-    label: 'Voice calls',
-    art: (
-      <g>
-        <g transform="translate(58 62) scale(5.6)">
-          <path d={HANDSET} fill="#fff" />
-        </g>
-        {[0, 1, 2].map((i) => (
-          <motion.path
-            key={i}
-            d={`M${150 + i * 18} ${70 - i * 16} a ${40 + i * 22} ${40 + i * 22} 0 0 1 ${36 + i * 18} ${40 + i * 18}`}
-            fill="none"
-            stroke="#fff"
-            strokeWidth="12"
-            strokeLinecap="round"
-            animate={{ opacity: [0.2, 1, 0.2] }}
-            transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.2 }}
-          />
-        ))}
-      </g>
-    ),
-  },
-  {
-    label: 'Android app',
-    art: (
-      <g>
-        <rect x="80" y="34" width="96" height="188" rx="20" fill="#fff" />
-        <rect x="90" y="54" width="76" height="140" rx="8" fill="#1B6E75" />
-        <rect x="112" y="42" width="32" height="5" rx="2.5" fill="#1B6E75" />
-        <circle cx="128" cy="208" r="6" fill="#1B6E75" />
-        <circle cx="128" cy="98" r="18" fill="#7BC6CC" />
-        <rect x="104" y="124" width="48" height="8" rx="4" fill="#fff" opacity="0.9" />
-        <motion.circle
-          cx="128"
-          cy="166"
-          r="13"
-          fill="#2E9E5B"
-          animate={{ scale: [1, 1.18, 1] }}
-          transition={{ duration: 1, repeat: Infinity }}
-          style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-        />
-      </g>
-    ),
-  },
-  {
-    label: 'Messages',
-    art: (
-      <g>
-        <rect x="36" y="58" width="150" height="96" rx="34" fill="#fff" />
-        <path d="M62 150 L52 182 L94 152 Z" fill="#fff" />
-        {[0, 1, 2].map((i) => (
-          <motion.circle
-            key={i}
-            cx={80 + i * 31}
-            cy="106"
-            r="10"
-            fill="#22878F"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }}
-          />
-        ))}
-        <rect x="120" y="140" width="104" height="62" rx="26" fill="#FFD08A" />
-        <path d="M200 198 L214 222 L184 200 Z" fill="#FFD08A" />
-        <rect x="140" y="160" width="62" height="8" rx="4" fill="#9A6214" opacity="0.6" />
-        <rect x="140" y="176" width="40" height="8" rx="4" fill="#9A6214" opacity="0.6" />
-      </g>
-    ),
-  },
+// the call loop, in 0.1 s ticks
+const LOOP = [
+  { mode: 'dial', len: 22 },
+  { mode: 'calling', len: 16 },
+  { mode: 'incall', len: 30 },
+  { mode: 'chat', len: 28 },
 ];
+const LOOP_LEN = LOOP.reduce((s, x) => s + x.len, 0);
+const stepAt = (t) => {
+  let k = t % LOOP_LEN;
+  for (const s of LOOP) {
+    if (k < s.len) return { mode: s.mode, k };
+    k -= s.len;
+  }
+  return { mode: 'dial', k: 0 };
+};
+const LABEL = { dial: 'Dialing #86369', calling: 'Ringing…', incall: 'On a call', chat: 'Chatting' };
+
+const CallerCard = () => (
+  <div className="part p-caller">
+    <span className="av" style={{ '--c': '#8E44C9', width: 40, height: 40, fontSize: 17 }}>
+      M
+    </span>
+    <span>
+      <b>Meera</b>
+      <small>
+        <i className="dot-on" /> online now
+      </small>
+    </span>
+  </div>
+);
+
+const MatchChip = () => (
+  <div className="part p-chip">
+    <span className="p-chip-ico">⚡</span>
+    Matched in 3 sec
+  </div>
+);
+
+const Bubble = ({ text, mine }) => <div className={`part p-bubble${mine ? ' mine' : ''}`}>{text}</div>;
+
+// where each floating piece sits (% of the art box), where it flies in from, and its scroll depth
+const PIECES = [
+  { key: 'caller', C: CallerCard, at: [2, 12], from: [-260, -40], depth: 1.4, delay: 0.5 },
+  { key: 'number', C: NumberPart, at: [70, 6], from: [220, -180], depth: 1.1, delay: 0.62 },
+  { key: 'voice', C: VoicePart, at: [64, 46], from: [300, 20], depth: 1.6, delay: 0.74 },
+  { key: 'match', C: MatchChip, at: [-4, 52], from: [-300, 60], depth: 1.2, delay: 0.86 },
+  { key: 'bubble', C: () => <Bubble text="Hey! 👋 Kaise ho?" />, at: [6, 78], from: [-200, 220], depth: 1.5, delay: 0.98 },
+  { key: 'streak', C: StreakPart, at: [62, 76], from: [240, 220], depth: 1.3, delay: 1.1 },
+  { key: 'coin', C: CoinPart, at: [70, 27], from: [280, -60], depth: 0.9, delay: 1.22 },
+];
+
+const Piece = ({ p, out, i }) => {
+  const dx = p.at[0] < 40 ? -1 : 1;
+  const x = useTransform(out, [0, 1], [0, dx * 160 * p.depth]);
+  const y = useTransform(out, [0, 1], [0, (p.at[1] < 50 ? -1 : 1) * 90 * p.depth]);
+  const C = p.C;
+  return (
+    <motion.div className="piece" style={{ left: `${p.at[0]}%`, top: `${p.at[1]}%`, x, y }}>
+      <motion.div
+        initial={{ opacity: 0, x: p.from[0], y: p.from[1], scale: 0.6, rotate: dx * 18 }}
+        animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
+        transition={{ type: 'spring', stiffness: 70, damping: 14, delay: p.delay }}
+      >
+        <motion.div animate={{ y: [0, -7, 0] }} transition={{ duration: 3.4 + (i % 3) * 0.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}>
+          <C />
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const Hero = () => {
   const ref = useRef(null);
-  const [idx, setIdx] = useState(0);
+  const artRef = useRef(null);
+  const [tick, setTick] = useState(30); // start on "calling" in the pre-rendered HTML
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const t = setInterval(() => setIdx((i) => (i + 1) % GLYPHS.length), 2600);
+    setTick(0);
+    const t = setInterval(() => setTick((v) => v + 1), 100);
     return () => clearInterval(t);
   }, []);
+  const { mode, k } = stepAt(tick);
+  const digits = mode === 'dial' ? Math.min(NUMBER_LEN, Math.floor(k / 3)) : NUMBER_LEN;
+  const secs = mode === 'incall' ? Math.floor(k / 2) + 4 : 0;
+  const chatN = mode === 'chat' ? Math.min(CALL_STORY.chat.length, Math.floor(k / 6) + 1) : 0;
+
+  // pointer tilt for the phone
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const rotY = useSpring(useTransform(px, [-1, 1], [-14, 6]), { stiffness: 80, damping: 15 });
+  const rotX = useSpring(useTransform(py, [-1, 1], [10, -4]), { stiffness: 80, damping: 15 });
+  const onMove = (e) => {
+    const r = artRef.current?.getBoundingClientRect();
+    if (!r) return;
+    px.set(((e.clientX - r.left) / r.width) * 2 - 1);
+    py.set(((e.clientY - r.top) / r.height) * 2 - 1);
+  };
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const out = useSpring(scrollYProgress, { stiffness: 100, damping: 24 });
-  const artRotX = useTransform(out, [0, 1], [0, 35]);
-  const artY = useTransform(out, [0, 1], [0, 120]);
+  const out = useSpring(scrollYProgress, { stiffness: 70, damping: 20 });
+  const phoneY = useTransform(out, [0, 1], [0, 140]);
+  const phoneS = useTransform(out, [0, 1], [1, 0.85]);
   const textY = useTransform(out, [0, 1], [0, -60]);
   const textO = useTransform(out, [0, 0.7], [1, 0]);
-  const g = GLYPHS[idx];
 
   return (
-    <section className="hero" id="top" ref={ref} aria-labelledby="hero-title">
+    <section className="hero" id="top" ref={ref} aria-labelledby="hero-title" onPointerMove={onMove}>
       <div className="wrap hero-grid" id="download">
         <motion.div style={{ y: textY, opacity: textO }}>
-          <motion.span
-            className="eyebrow"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE }}
-          >
+          <motion.span className="eyebrow" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }}>
             <span className="eyebrow-dot" />
             {HERO.eyebrow}
           </motion.span>
@@ -169,81 +149,37 @@ const Hero = () => {
               See a call happen
             </a>
           </motion.div>
-          <ul className="hero-modes" aria-label="What TalkLink does">
-            {GLYPHS.map((m, i) => (
-              <li key={m.label} className={i === idx ? 'on' : ''}>
-                {m.label}
-              </li>
-            ))}
-          </ul>
+          <motion.div className="hero-live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+            <span className="live-dot" />
+            <span className="hero-live-text">{LABEL[mode]}</span>
+            <span className="hero-live-steps" aria-hidden="true">
+              {LOOP.map((s) => (
+                <i key={s.mode} className={s.mode === mode ? 'on' : ''} />
+              ))}
+            </span>
+          </motion.div>
         </motion.div>
 
-        <div className="hero-art" aria-hidden="true">
-          <div className="hero-blueprint">
-            <span className="bp-ring r1" />
-            <span className="bp-ring r2" />
-            <span className="bp-axis ax" />
-            <span className="bp-axis ay" />
-          </div>
-          <motion.div className="hero-tile-wrap" style={{ rotateX: artRotX, y: artY }}>
-            <motion.svg
-              className="hero-mark"
-              viewBox="-40 -40 336 336"
-              initial={{ opacity: 0, scale: 0.7, rotate: -12 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.9, ease: EASE }}
+        <div className="hero-art" ref={artRef} aria-hidden="true">
+          <div className="hero-glow" />
+          {mode === 'calling' || mode === 'incall'
+            ? [0, 1, 2].map((i) => <span key={i} className="hero-ring" style={{ animationDelay: `${i * 0.6}s` }} />)
+            : null}
+          <motion.div className="hero-phone-wrap" style={{ y: phoneY, scale: phoneS, rotateX: rotX, rotateY: rotY }}>
+            <motion.div
+              className="hero-phone"
+              initial={{ opacity: 0, y: 80, rotateX: 30 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ duration: 1, ease: EASE }}
             >
-              <defs>
-                <linearGradient id="heroTile" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stopColor="#2AA3AC" />
-                  <stop offset="1" stopColor="#1B6E75" />
-                </linearGradient>
-              </defs>
-              <rect width="256" height="256" rx="60" fill="url(#heroTile)" />
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.g
-                  key={g.label}
-                  initial={{ opacity: 0, scale: 0.5, rotate: -25 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.5, rotate: 25 }}
-                  transition={{ duration: 0.45, ease: EASE }}
-                  style={{ transformOrigin: '128px 128px' }}
-                >
-                  {g.art}
-                </motion.g>
-              </AnimatePresence>
-            </motion.svg>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={g.label}
-                className="hero-mode-pill"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                {g.label}
-              </motion.span>
-            </AnimatePresence>
+              <span className="notch" />
+              <div className="phone-screen">
+                <Screen mode={mode} digits={digits} secs={secs} chatN={chatN} name="Meera" from="Rahul" />
+              </div>
+            </motion.div>
           </motion.div>
-          {[
-            ['Matched in 3 sec', 'c1'],
-            ['#86369', 'c2'],
-            ['🔥 7 days', 'c3'],
-          ].map(([t, c], i) => (
-            <motion.span
-              key={c}
-              className={`hero-chip ${c}`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
-              transition={{
-                opacity: { delay: 1 + i * 0.15 },
-                scale: { delay: 1 + i * 0.15 },
-                y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.6 },
-              }}
-            >
-              {t}
-            </motion.span>
+          {PIECES.map((p, i) => (
+            <Piece key={p.key} p={p} out={out} i={i} />
           ))}
         </div>
       </div>
