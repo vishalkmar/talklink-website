@@ -8,7 +8,7 @@ import { loadEnv } from 'vite';
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const dist = path.join(root, 'dist');
 const env = loadEnv('production', root, 'VITE_');
-const siteUrl = (env.VITE_SITE_URL || 'https://talklink-website.vercel.app').replace(/\/$/, '');
+const siteUrl = (env.VITE_SITE_URL || 'https://talklink-website-eight.vercel.app').replace(/\/$/, '');
 
 const { render } = await import(pathToFileURL(path.join(root, 'dist-ssr', 'entry-server.js')).href);
 const appHtml = render();
@@ -28,7 +28,7 @@ fs.writeFileSync(indexPath, html);
 
 for (const f of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
   const p = path.join(dist, f);
-  fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replaceAll('https://talklink-website.vercel.app', siteUrl));
+  fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replaceAll('https://talklink-website-eight.vercel.app', siteUrl));
 }
 fs.rmSync(path.join(root, 'dist-ssr'), { recursive: true, force: true });
 console.log(`[prerender] ${(appHtml.length / 1024).toFixed(1)} KB of page HTML written; site URL ${siteUrl}`);

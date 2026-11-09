@@ -2025,3 +2025,75 @@ span.scr-chat em.out {
     right: -30px;
   }
 }
+
+/* ---------- mobile fixes ---------- */
+html,
+body {
+  overflow-x: clip; /* nothing may push the page sideways */
+}
+.hero,
+.callstory,
+.section {
+  overflow-x: clip;
+}
+/* phones: Rahul on top, Meera below, the signal line is hidden */
+.cs-mobile .person {
+  bottom: auto;
+}
+.cs-mobile .p-left {
+  left: -40px;
+  top: -110px;
+}
+.cs-mobile .p-right {
+  right: -40px;
+  left: auto;
+  top: 330px;
+}
+.cs-mobile .cs-signal {
+  display: none;
+}
+.cs-mobile .cs-badge {
+  top: auto;
+  bottom: auto;
+  top: 440px;
+  left: 30%;
+  font-size: 16px;
+  z-index: 5;
+}
+.cs-mobile .cs-float {
+  top: 300px;
+  left: 30%;
+  font-size: 19px;
+  z-index: 5;
+}
+.cs-mobile .name-tag {
+  font-size: 18px;
+}
+@media (max-width: 700px) {
+  .callstory {
+    height: 340vh;
+  }
+  .callstory-pin {
+    padding-top: 70px;
+  }
+  .callstory-head h2 {
+    font-size: 22px;
+  }
+  .cs-caption {
+    min-height: 0;
+    margin-top: 10px;
+  }
+  .cs-stage {
+    margin-bottom: 84px; /* clear the fixed Download button */
+  }
+}
+.cs-mobile .p-left .person-svg {
+  mask-image: linear-gradient(#000 72%, transparent 96%);
+  -webkit-mask-image: linear-gradient(#000 72%, transparent 96%);
+}
+.cs-mobile .p-left .name-tag {
+  left: 90px;
+}
+.cs-mobile .p-right .name-tag {
+  right: 90px;
+}

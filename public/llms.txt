@@ -2,7 +2,7 @@
 
 > TalkLink is an Android app (India) to talk to new people: random voice calls and text chats in
 > seconds, plus direct calls to friends through a private number. Free to use; 18+ only.
-> Download the APK: https://talklink-website.vercel.app/downloads/TalkLink.apk
+> Download the APK: https://talklink-website-eight.vercel.app/downloads/TalkLink.apk
 
 ## What it does
 - Random audio calls or text chats: tap Start talking, the first person online who accepts is connected.
@@ -21,5 +21,5 @@
 - Calls are peer-to-peer and encrypted (WebRTC, DTLS-SRTP); calls are not recorded
 
 ## Links
-- Website: https://talklink-website.vercel.app/
-- APK: https://talklink-website.vercel.app/downloads/TalkLink.apk
+- Website: https://talklink-website-eight.vercel.app/
+- APK: https://talklink-website-eight.vercel.app/downloads/TalkLink.apk

@@ -18,6 +18,9 @@ import { CALL_STORY } from '../content';
 const W = 1100;
 const H = 620;
 const NUMBER = '#86369';
+// phone layout: Rahul on top, Meera below
+const MW = 600;
+const MH = 900;
 
 // scroll progress -> phase
 const PHASES = [
@@ -216,6 +219,7 @@ const CallStory = () => {
   const [secs, setSecs] = useState(reduce ? 42 : 0);
   const [chatN, setChatN] = useState(reduce ? CALL_STORY.chat.length : 0);
   const [scale, setScale] = useState(1);
+  const [mobile, setMobile] = useState(false);
 
   useMotionValueEvent(progress, 'change', (p) => {
     setPhase(phaseAt(p));
@@ -229,10 +233,15 @@ const CallStory = () => {
     if (!el) return undefined;
     const fit = () => {
       const r = el.getBoundingClientRect();
-      // narrow screens crop the outer shoulders (the phones stay in view)
-      const visW = r.width < 700 ? W - 440 : W;
-      // the top of the scene is empty sky: crop it so the people can be bigger
-      setScale(Math.min(1.25, r.width / visW, (r.height - 8) / (H - 150)));
+      const narrow = window.innerWidth < 700;
+      setMobile(narrow);
+      if (narrow) {
+        // phones: the two people stand one above the other, filling the screen height
+        setScale(Math.min(r.width / MW, r.height / MH));
+      } else {
+        // the top of the scene is empty sky: crop it so the people can be bigger
+        setScale(Math.min(1.25, r.width / W, (r.height - 8) / (H - 150)));
+      }
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -281,7 +290,10 @@ const CallStory = () => {
         </div>
 
         <div className="cs-stage" ref={stageRef} aria-hidden="true">
-          <div className="cs-scene" style={{ width: W, height: H, transform: `translateX(-50%) scale(${scale})` }}>
+          <div
+            className={`cs-scene${mobile ? ' cs-mobile' : ''}`}
+            style={{ width: mobile ? MW : W, height: mobile ? MH : H, transform: `translateX(-50%) scale(${scale})` }}
+          >
             {/* signal between the phones */}
             <svg className="cs-signal" viewBox={`0 0 ${W} ${H}`}>
               {phase === 'calling' || phase === 'ringing'

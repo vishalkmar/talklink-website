@@ -11,4 +11,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://talklink-website.vercel.app/sitemap.xml
+Sitemap: https://talklink-website-eight.vercel.app/sitemap.xml
