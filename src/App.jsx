@@ -2,7 +2,7 @@ import React from 'react';
 import { MotionConfig, motion, useScroll, useSpring } from 'framer-motion';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import Assembly from './components/Assembly';
+import HowItWorks from './components/HowItWorks';
 import CallStory from './components/CallStory';
 import Privacy from './components/Privacy';
 import { Install, Faq, FinalCta, Footer } from './components/Sections';
@@ -29,7 +29,7 @@ const App = () => (
     <main>
       <Hero />
       <CallStory />
-      <Assembly />
+      <HowItWorks />
       <Privacy />
       <Install />
       <Faq />
