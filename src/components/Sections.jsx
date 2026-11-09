@@ -1,96 +1,66 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { STORY, STEPS, INSTALL_STEPS, FAQ, KEYWORDS, SITE, NAV } from '../content';
-import { DownloadButton, Icon, Icon3D, Logo, Reveal, WordsReveal } from './ui';
-import PhoneMock from './PhoneMock';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { INSTALL, FAQ, KEYWORDS, SITE, NAV } from '../content';
+import { DownloadButton, Icon, Logo, Reveal } from './ui';
 
-const TONES = ['teal', 'gold', 'purple', 'blue', 'flame', 'green', 'pink'];
-
-const IconRow = ({ icon, tone, title, text, i }) => (
-  <Reveal as="li" className="icon-row" i={i}>
-    <Icon3D name={icon} tone={tone} size={58} />
-    <div>
-      <h3>{title}</h3>
-      <p>{text}</p>
-    </div>
-  </Reveal>
-);
-
-const InstallBlock = () => (
-  <>
-    <ol className="steps">
-      {STEPS.map((s, i) => (
-        <Reveal as="li" className="glass step" i={i} key={s.n}>
-          <span className="step-n">{s.n}</span>
-          <div>
-            <h3>{s.title}</h3>
-            <p>{s.text}</p>
-          </div>
-        </Reveal>
-      ))}
-    </ol>
-    <Reveal className="install-guide" i={1}>
-      <h3>
-        <Icon name="android" size={22} /> Installing the APK
-      </h3>
-      <ol>
-        {INSTALL_STEPS.map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ol>
-      <DownloadButton />
-    </Reveal>
-  </>
-);
-
-const SCREEN_LABEL = {
-  connect: 'TalkLink finding someone to talk to, then a match',
-  incall: 'TalkLink in a call with mute, speaker and chat buttons',
-  chat: 'TalkLink chat with a voice note and a view-once message',
-  status: 'TalkLink status viewer with progress bars and a download button',
-  goals: 'TalkLink goals screen with a 7 day streak and daily goals',
-  privacy: 'TalkLink privacy settings: who can call me and the private number',
-  install: 'Installing the TalkLink app',
+const InstallStep = ({ s, i, progress }) => {
+  const at = (i + 0.5) / INSTALL.length;
+  const on = useTransform(progress, [at - 0.12, at], [0, 1]);
+  const bg = useTransform(on, [0, 1], ['rgba(255,255,255,0.7)', 'rgba(34,135,143,1)']);
+  const color = useTransform(on, [0, 1], ['#22878F', '#ffffff']);
+  return (
+    <li className="ins-step">
+      <motion.span className="ins-node" style={{ background: bg, color }}>
+        {i + 1}
+      </motion.span>
+      <motion.div style={{ opacity: useTransform(on, [0, 1], [0.45, 1]) }}>
+        <h3>{s.title}</h3>
+        <p>{s.text}</p>
+      </motion.div>
+    </li>
+  );
 };
 
-const Chapter = ({ ch, n }) => (
-  <section className={`story story-${ch.textSide}`} id={ch.id} aria-labelledby={`${ch.id}-title`}>
-    <div className="wrap story-grid">
-      <div className="story-text">
-        <Reveal className="chapter-tag">
-          <span className="chapter-n">{String(n).padStart(2, '0')}</span>
-          <span className="kicker">{ch.kicker}</span>
-        </Reveal>
-        <WordsReveal id={`${ch.id}-title`} text={ch.title} className="story-title" />
-        <Reveal as="p" className="story-lead" i={1}>
-          {ch.lead}
-        </Reveal>
-        {ch.items.length ? (
-          <ul className="icon-list">
-            {ch.items.map((f, i) => (
-              <IconRow key={f.title} icon={f.icon} tone={TONES[(n + i) % TONES.length]} title={f.title} text={f.text} i={i} />
-            ))}
-          </ul>
-        ) : null}
-        {ch.id === 'install' ? <InstallBlock /> : null}
-      </div>
-      <div className="phone-anchor story-anchor" data-phone data-screen={ch.screen} data-prop={ch.prop} data-rot={ch.rot}>
-        {/* without WebGL the same screen is drawn flat */}
-        <div className="stage-fallback">
-          <PhoneMock screen={ch.screen} label={SCREEN_LABEL[ch.screen]} />
+/** Install steps on a line that fills as you scroll; each node lights up when the line reaches it. */
+export const Install = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 75%', 'end 55%'] });
+  return (
+    <section className="section install" id="install" aria-labelledby="install-title">
+      <div className="wrap install-grid">
+        <div>
+          <Reveal className="kicker">Install</Reveal>
+          <Reveal as="h2" id="install-title" i={1}>
+            Up and talking in a minute.
+          </Reveal>
+          <Reveal as="p" className="section-lead" i={2}>
+            TalkLink is a direct download for Android, not on the Play Store yet.
+          </Reveal>
+          <Reveal className="dl-card" i={3}>
+            <span className="dl-ico">
+              <Icon name="android" size={26} />
+            </span>
+            <div>
+              <b>TalkLink.apk</b>
+              <small>
+                v{SITE.apkVersion} · {SITE.apkSize} · {SITE.minAndroid}
+              </small>
+            </div>
+            <DownloadButton size="sm" label="Download" />
+          </Reveal>
         </div>
+        <ol className="ins-line" ref={ref}>
+          <span className="ins-track" aria-hidden="true">
+            <motion.span style={{ scaleY: scrollYProgress }} />
+          </span>
+          {INSTALL.map((s, i) => (
+            <InstallStep key={s.title} s={s} i={i} progress={scrollYProgress} />
+          ))}
+        </ol>
       </div>
-    </div>
-  </section>
-);
-
-export const Story = () => (
-  <div className="story-wrap">
-    {STORY.map((ch, i) => (
-      <Chapter ch={ch} n={i + 1} key={ch.id} />
-    ))}
-  </div>
-);
+    </section>
+  );
+};
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -100,18 +70,20 @@ const faqSchema = {
 
 export const Faq = () => (
   <section className="section" id="faq" aria-labelledby="faq-title">
-    <div className="wrap">
-      <div className="section-head center">
+    <div className="wrap faq-wrap">
+      <div>
         <Reveal className="kicker">FAQ</Reveal>
-        <WordsReveal id="faq-title" text="Questions, answered." />
+        <Reveal as="h2" id="faq-title" i={1}>
+          Quick answers.
+        </Reveal>
       </div>
       <div className="faq">
         {FAQ.map((f, i) => (
-          <Reveal as="details" className="glass" i={i % 4} key={f.q}>
+          <Reveal as="details" i={i % 3} key={f.q}>
             <summary>
               {f.q}
               <span className="faq-plus">
-                <Icon name="plus" size={16} stroke={2.6} />
+                <Icon name="plus" size={14} stroke={2.6} />
               </span>
             </summary>
             <p className="faq-a">{f.a}</p>
@@ -128,28 +100,18 @@ export const FinalCta = () => (
   <section className="section" aria-labelledby="cta-title">
     <div className="wrap">
       <Reveal className="cta-card">
-        <svg className="cta-rings" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true">
-          {[0, 1, 2].map((i) => (
-            <motion.circle
-              key={i}
-              cx="400"
-              cy="200"
-              r="120"
-              fill="none"
-              stroke="rgba(255,255,255,0.35)"
-              strokeWidth="2"
-              initial={{ scale: 0.6, opacity: 0.8 }}
-              animate={{ scale: 2.4, opacity: 0 }}
-              transition={{ duration: 4, repeat: Infinity, delay: i * 1.3, ease: 'easeOut' }}
-              style={{ transformOrigin: '400px 200px' }}
-            />
-          ))}
-        </svg>
-        <div className="cta-logo">
-          <Logo size={72} />
-        </div>
+        <div className="cta-grid" aria-hidden="true" />
+        <motion.div
+          className="cta-logo"
+          initial={{ rotate: -12, scale: 0.8 }}
+          whileInView={{ rotate: 0, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ type: 'spring', stiffness: 120, damping: 12 }}
+        >
+          <Logo size={64} />
+        </motion.div>
         <h2 id="cta-title">Someone new is one tap away.</h2>
-        <p>Download TalkLink, grab your 100 welcome credits and start your first conversation today.</p>
+        <p>Free download. 100 credits to start.</p>
         <DownloadButton />
       </Reveal>
     </div>
@@ -161,7 +123,7 @@ export const Footer = () => (
     <div className="wrap">
       <div className="footer-row">
         <a className="brand" href="#top">
-          <Logo size={34} />
+          <Logo size={30} />
           TalkLink
         </a>
         <nav className="footer-links" aria-label="Footer">
@@ -184,8 +146,7 @@ export const Footer = () => (
         </nav>
       </div>
       <p className="footer-keywords">
-        TalkLink is a free Android app to {KEYWORDS.join(' · ')}. For adults 18+ only. Credits have no cash value. ©{' '}
-        {new Date().getFullYear()} TalkLink.
+        TalkLink: {KEYWORDS.join(' · ')}. For adults 18+. Credits have no cash value. © {new Date().getFullYear()} TalkLink.
       </p>
     </div>
   </footer>
